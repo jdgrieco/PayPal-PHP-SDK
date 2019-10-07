@@ -35,6 +35,7 @@ class PayPalLoggingManager
      * Returns the singleton object
      *
      * @param string $loggerName
+     *
      * @return $this
      */
     public static function getInstance($loggerName = __CLASS__)
@@ -56,7 +57,11 @@ class PayPalLoggingManager
     {
         $config = PayPalConfigManager::getInstance()->getConfigHashmap();
         // Checks if custom factory defined, and is it an implementation of @PayPalLogFactory
-        $factory = array_key_exists('log.AdapterFactory', $config) && in_array('PayPal\Log\PayPalLogFactory', class_implements($config['log.AdapterFactory'])) ? $config['log.AdapterFactory'] : '\PayPal\Log\PayPalDefaultLogFactory';
+        $factory = array_key_exists('log.AdapterFactory', $config) && in_array(
+            'PayPal\Log\PayPalLogFactory', class_implements(
+            $config['log.AdapterFactory']
+        )
+        ) ? $config['log.AdapterFactory'] : '\PayPal\Log\PayPalDefaultLogFactory';
         /** @var PayPalLogFactory $factoryInstance */
         $factoryInstance = new $factory();
         $this->logger = $factoryInstance->getLogger($loggerName);
@@ -111,9 +116,6 @@ class PayPalLoggingManager
     public function debug($message)
     {
         $config = PayPalConfigManager::getInstance()->getConfigHashmap();
-        // Disable debug in live mode.
-        if (array_key_exists('mode', $config) && $config['mode'] != 'live') {
-            $this->logger->debug($message);
-        }
+        $this->logger->debug($message);
     }
 }
